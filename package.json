@@ -1,0 +1,32 @@
+{
+  "name": "virt-css_transition_group",
+  "version": "0.0.1",
+  "description": "Virt CSSTransitionGroup for the browser and node.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nathanfaucett/virt-css_transition_group.git"
+  },
+  "main": "src/index.js",
+  "keywords": [
+    "virt-css_transition_group",
+    "virt-css_transition_group.js"
+  ],
+  "author": "Nathan Faucett",
+  "license": "BSD-2-Clause",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-jsbeautifier": "^0.2.7"
+  },
+  "dependencies": {
+    "dom_class": "git://github.com/nathanfaucett/dom_class",
+    "extend": "git://github.com/nathanfaucett/extend",
+    "for_each": "git://github.com/nathanfaucett/for_each",
+    "has": "git://github.com/nathanfaucett/has",
+    "supports": "git://github.com/nathanfaucett/supports",
+    "virt": "git://github.com/nathanfaucett/virt",
+    "virt-dom": "git://github.com/nathanfaucett/virt-dom",
+    "virt-transition_group": "git://github.com/nathanfaucett/virt-transition_group"
+  }
+}
