@@ -11,6 +11,9 @@
     "virt-css_transition_group",
     "virt-css_transition_group.js"
   ],
+  "scripts": {
+    "example": "comn -f example/src/index.js -o example/index.js"
+  },
   "author": "Nathan Faucett",
   "license": "BSD-2-Clause",
   "readmeFilename": "README.md",
