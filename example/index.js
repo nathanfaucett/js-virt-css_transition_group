@@ -6291,7 +6291,7 @@ TodoListPrototype.render = function() {
     return (
         virt.createView(CSSTransitionGroup, {
                 className: "todo-list",
-                tagName: "ul"
+                component: "ul"
             },
             map(this.state.list, function(item) {
                 return virt.createView(TodoItem, {
@@ -6367,6 +6367,7 @@ function(require, exports, module, global) {
 var virt = require(8),
     extend = require(43),
     forEach = require(70),
+    propTypes = require(122),
     createTransitionChild = require(129),
     getChildMapping = require(130),
     getMovePositions = require(134),
@@ -6409,6 +6410,11 @@ function TransitionGroup(props, children, context) {
     };
 }
 virt.Component.extend(TransitionGroup, "TransitionGroup");
+
+TransitionGroup.propTypes = {
+    component: propTypes.any,
+    childFactory: propTypes.func
+};
 
 TransitionGroupPrototype = TransitionGroup.prototype;
 
@@ -6614,7 +6620,7 @@ TransitionGroupPrototype.render = function() {
         }
     }
 
-    return virt.createView(this.props.tagName, this.props, childrenToRender);
+    return virt.createView(this.props.component, this.props, childrenToRender);
 };
 
 

@@ -9,7 +9,6 @@
     "event_listener": "nathanfaucett/event_listener",
     "map": "nathanfaucett/map",
     "prop_types": "git://github.com/nathanfaucett/prop_types",
-    "values": "nathanfaucett/values",
-    "virt-css_transition_group": "git://github.com/nathanfaucett/virt-css_transition_group"
+    "values": "nathanfaucett/values"
   }
 }

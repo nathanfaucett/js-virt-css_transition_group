@@ -62,7 +62,7 @@ TodoListPrototype.render = function() {
     return (
         virt.createView(CSSTransitionGroup, {
                 className: "todo-list",
-                tagName: "ul"
+                component: "ul"
             },
             map(this.state.list, function(item) {
                 return virt.createView(TodoItem, {
