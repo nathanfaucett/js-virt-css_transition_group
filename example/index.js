@@ -43,7 +43,7 @@ var environment = require(1),
     eventListener = require(2),
     virt = require(8),
     virtDOM = require(60),
-    App = require(122);
+    App = require(124);
 
 
 eventListener.on(environment.window, "load", function() {
@@ -2193,13 +2193,13 @@ module.exports = EventManager;
 
 function EventManager() {
     this.propNameToTopLevel = {};
-    this.__events = {};
+    this.events = {};
 }
 
 EventManagerPrototype = EventManager.prototype;
 
 EventManagerPrototype.on = function(id, topLevelType, listener, transaction) {
-    var events = this.__events,
+    var events = this.events,
         event = events[topLevelType] || (events[topLevelType] = {});
 
     event[id] = listener;
@@ -2207,7 +2207,7 @@ EventManagerPrototype.on = function(id, topLevelType, listener, transaction) {
 };
 
 EventManagerPrototype.off = function(id, topLevelType, transaction) {
-    var events = this.__events,
+    var events = this.events,
         event = events[topLevelType];
 
     if (event[id] !== undefined) {
@@ -2217,7 +2217,7 @@ EventManagerPrototype.off = function(id, topLevelType, transaction) {
 };
 
 EventManagerPrototype.allOff = function(id, transaction) {
-    var events = this.__events,
+    var events = this.events,
         event, topLevelType;
 
     for (topLevelType in events) {
@@ -2294,7 +2294,6 @@ NodePrototype.removeNode = function(node) {
     var renderedChildren = this.renderedChildren,
         index;
 
-    this.root.removeNode(node);
     node.parent = null;
 
     index = indexOf(renderedChildren, node);
@@ -2365,8 +2364,8 @@ NodePrototype.__mount = function(transaction) {
 };
 
 NodePrototype.__mountChildren = function(renderedView, transaction) {
-    var parentId = this.id,
-        root = this.root,
+    var _this = this,
+        parentId = this.id,
         renderedChildren = [];
 
     this.renderedChildren = renderedChildren;
@@ -2379,8 +2378,7 @@ NodePrototype.__mountChildren = function(renderedView, transaction) {
         } else {
             id = getChildKey(parentId, child, index);
             node = new Node(parentId, id, child);
-            root.appendNode(node);
-            renderedChildren[renderedChildren.length] = node;
+            _this.appendNode(node);
             return node.__mount(transaction);
         }
     });
@@ -2406,15 +2404,11 @@ NodePrototype.__unmount = function(transaction) {
     component.__mountState = componentState.UNMOUNTING;
     component.componentWillUnmount();
 
-    this.__detachRefs();
-
     if (this.isBottomLevel !== false) {
-        if (this.parent !== null) {
-            this.parent.removeNode(this);
-        } else {
-            this.root.removeNode(this);
-        }
+        this.root.removeNode(this);
     }
+
+    this.__detachRefs();
 
     this.context = null;
     this.component = null;
@@ -2914,6 +2908,10 @@ ComponentPrototype.isMounted = function() {
     return this.__mountState === componentState.MOUNTED;
 };
 
+ComponentPrototype.getId = function() {
+    return this.__node.id;
+};
+
 ComponentPrototype.getChildContext = function() {};
 
 ComponentPrototype.componentDidMount = function() {};
@@ -3234,6 +3232,7 @@ function diffChild(root, parentNode, previousChild, nextChild, parentId, index, 
                 id = getChildKey(parentId, previousChild, index);
                 node = root.childHash[id];
                 node.unmount(transaction);
+                parentNode.removeNode(node);
             } else if (isPrimativeView(nextChild)) {
                 transaction.replace(parentId, null, index, nextChild);
             } else {
@@ -3245,6 +3244,7 @@ function diffChild(root, parentNode, previousChild, nextChild, parentId, index, 
                         node.update(nextChild, transaction);
                     } else {
                         node.__unmount(transaction);
+                        parentNode.removeNode(node);
 
                         id = getChildKey(parentId, nextChild, index);
                         node = new Node(parentId, id, nextChild);
@@ -3260,8 +3260,6 @@ function diffChild(root, parentNode, previousChild, nextChild, parentId, index, 
             }
         }
     }
-
-    console.log(parentNode.renderedChildren);
 }
 
 function reorder(previousChildren, nextChildren) {
@@ -3400,10 +3398,10 @@ virtDOM.renderString = function(view, id) {
     return renderString(view, id || ".0");
 };
 
-virtDOM.findDOMNode = require(117);
+virtDOM.findDOMNode = require(119);
 
-virtDOM.createWorkerRender = require(118);
-virtDOM.renderWorker = require(120);
+virtDOM.createWorkerRender = require(120);
+virtDOM.renderWorker = require(122);
 
 
 },
@@ -3411,8 +3409,8 @@ function(require, exports, module, global) {
 
 var virt = require(8),
     Adaptor = require(62),
-    getRootNodeInContainer = require(116),
-    getNodeId = require(114);
+    getRootNodeInContainer = require(118),
+    getNodeId = require(116);
 
 
 var rootsById = {};
@@ -3473,7 +3471,7 @@ function Adaptor(root, containerDOMNode) {
     var document = containerDOMNode.ownerDocument,
         window = getWindow(document),
         eventManager = root.eventManager,
-        events = eventManager.__events,
+        events = eventManager.events,
         eventHandler = new EventHandler(document, window);
 
     this.root = root;
@@ -5072,8 +5070,9 @@ function(require, exports, module, global) {
 var consts = require(106),
     createDOMElement = require(107),
     renderString = require(110),
-    addDOMNodes = require(112),
-    removeDOMNodes = require(115),
+    renderChildrenString = require(113),
+    addDOMNodes = require(114),
+    removeDOMNodes = require(117),
     getNodeById = require(68),
     applyProperties = require(108);
 
@@ -5126,7 +5125,7 @@ function remove(parentNode, id, index) {
 }
 
 function mount(parentNode, view, id) {
-    parentNode.innerHTML = renderString(view, id);
+    parentNode.innerHTML = renderString(view, null, id);
     addDOMNodes(parentNode.childNodes);
 }
 
@@ -5134,7 +5133,7 @@ function insert(parentNode, id, index, view, document) {
     var node = createDOMElement(view, id, document, false);
 
     if (view.children) {
-        node.innerHTML = renderString(view.children, id);
+        node.innerHTML = renderChildrenString(view.children, view.props, id);
         addDOMNodes(node.childNodes);
     }
 
@@ -5153,7 +5152,7 @@ function replace(parentNode, id, index, view, document) {
     var node = createDOMElement(view, id, document, false);
 
     if (view.children) {
-        node.innerHTML = renderString(view.children, id);
+        node.innerHTML = renderChildrenString(view.children, view.props, id);
         addDOMNodes(node.childNodes);
     }
 
@@ -5414,11 +5413,10 @@ function escapeKey(key) {
 function(require, exports, module, global) {
 
 var virt = require(8),
-    getViewKey = require(109),
+    getChildKey = require(111),
 
-    escapeTextContent = require(111),
+    escapeTextContent = require(112),
     isFunction = require(5),
-    isArray = require(12),
     map = require(19),
     isString = require(15),
     isObject = require(4),
@@ -5429,7 +5427,6 @@ var virt = require(8),
 
 var View = virt.View,
     isPrimativeView = View.isPrimativeView,
-    emptyProps = {},
 
     closedTags = {
         area: true,
@@ -5451,17 +5448,7 @@ var View = virt.View,
     };
 
 
-module.exports = function(view, id) {
-    var props;
-    if (isArray(view)) {
-        props = view.props;
-        return map(view, function(v, i) {
-            return render(v, props, id + "." + getViewKey(v, i));
-        }).join("");
-    } else {
-        return render(view, emptyProps, id);
-    }
-};
+module.exports = render;
 
 
 function render(view, parentProps, id) {
@@ -5476,7 +5463,7 @@ function render(view, parentProps, id) {
         return (
             closedTags[type] !== true ?
             contentTag(type, map(view.children, function(child, i) {
-                return render(child, props, id + "." + getViewKey(child, i));
+                return render(child, props, getChildKey(id, child, i));
             }).join(""), id, view.props) :
             closedTag(type, id, view.props)
         );
@@ -5484,7 +5471,7 @@ function render(view, parentProps, id) {
 }
 
 function contentMarkup(content, props) {
-    if (props.dangerouslySetInnerHTML !== true) {
+    if (props && props.dangerouslySetInnerHTML !== true) {
         return escapeTextContent(content);
     } else {
         return content;
@@ -5541,6 +5528,20 @@ function contentTag(type, content, id, props) {
 },
 function(require, exports, module, global) {
 
+var getViewKey = require(109);
+
+
+module.exports = getChildKey;
+
+
+function getChildKey(parentId, child, index) {
+    return parentId + "." + getViewKey(child, index);
+}
+
+
+},
+function(require, exports, module, global) {
+
 var ESCAPE_REGEX = /[&><"']/g,
     ESCAPE_LOOKUP = {
         "&": "&amp;",
@@ -5563,8 +5564,27 @@ module.exports = function escapeTextContent(text) {
 },
 function(require, exports, module, global) {
 
-var isElement = require(113),
-    getNodeId = require(114);
+var getChildKey = require(111),
+    map = require(19),
+    renderString = require(110);
+
+
+
+module.exports = renderChildrenString;
+
+
+function renderChildrenString(children, props, id) {
+    return map(children, function(view, index) {
+        return renderString(view, props, getChildKey(id, view, index));
+    });
+}
+
+
+},
+function(require, exports, module, global) {
+
+var isElement = require(115),
+    getNodeId = require(116);
 
 
 module.exports = addDOMNodes;
@@ -5636,7 +5656,7 @@ function getId(node) {
 },
 function(require, exports, module, global) {
 
-var isElement = require(113),
+var isElement = require(115),
     nodeCache = require(69),
     getNodeAttributeId = require(74);
 
@@ -5706,7 +5726,7 @@ function findDOMNode(value) {
 },
 function(require, exports, module, global) {
 
-var MessengerWorker = require(119),
+var MessengerWorker = require(121),
     has = require(18),
     isNode = require(7),
     isFunction = require(5),
@@ -5887,10 +5907,11 @@ function emit(listeners, data, callback) {
 function(require, exports, module, global) {
 
 var virt = require(8),
-    WorkerAdaptor = require(121);
+    WorkerAdaptor = require(123);
 
 
-var root = null;
+var ComponentPrototype = virt.Component.prototype,
+    root = null;
 
 
 module.exports = render;
@@ -5900,6 +5921,10 @@ function render(nextView) {
     if (root === null) {
         root = new virt.Root();
         root.adaptor = new WorkerAdaptor(root);
+
+        ComponentPrototype.emitMessage = emitMessage;
+        ComponentPrototype.onMessage = onMessage;
+        ComponentPrototype.offMessage = offMessage;
     }
 
     root.render(nextView);
@@ -5913,10 +5938,23 @@ render.unmount = function() {
 };
 
 
+function emitMessage(name, data, callback) {
+    return this.__node.root.adaptor.messenger.emit(name, data, callback);
+}
+
+function onMessage(name, callback) {
+    return this.__node.root.adaptor.messenger.on(name, callback);
+}
+
+function offMessage(name, callback) {
+    return this.__node.root.adaptor.messenger.off(name, callback);
+}
+
+
 },
 function(require, exports, module, global) {
 
-var MessengerWorker = require(119),
+var MessengerWorker = require(121),
     traverseAncestors = require(63),
     consts = require(70),
     eventClassMap = require(77);
@@ -5937,7 +5975,7 @@ function WorkerAdaptor(root) {
             document: global,
             viewport: viewport
         },
-        events = eventManager.__events;
+        events = eventManager.events;
 
     this.root = root;
     this.messenger = messenger;
@@ -5991,9 +6029,9 @@ function WorkerAdaptor(root) {
 function(require, exports, module, global) {
 
 var virt = require(8),
-    propTypes = require(123),
-    TodoList = require(126),
-    TodoForm = require(143);
+    propTypes = require(125),
+    TodoList = require(128),
+    TodoForm = require(145);
 
 
 var AppPrototype;
@@ -6036,9 +6074,9 @@ AppPrototype.render = function() {
 function(require, exports, module, global) {
 
 var isArray = require(12),
-    isRegExp = require(124),
+    isRegExp = require(126),
     isNullOrUndefined = require(11),
-    emptyFunction = require(125),
+    emptyFunction = require(127),
     isFunction = require(5),
     has = require(18),
     indexOf = require(43);
@@ -6258,11 +6296,11 @@ function(require, exports, module, global) {
 
 var virt = require(8),
     virtDOM = require(60),
-    CSSTransitionGroup = require(127),
+    CSSTransitionGroup = require(129),
     map = require(19),
-    dispatcher = require(138),
-    TodoStore = require(140),
-    TodoItem = require(142);
+    dispatcher = require(140),
+    TodoStore = require(142),
+    TodoItem = require(144);
 
 
 var TodoListPrototype;
@@ -6342,8 +6380,8 @@ function(require, exports, module, global) {
 
 var virt = require(8),
     extend = require(44),
-    TransitionGroup = require(128),
-    CSSTransitionGroupChild = require(133);
+    TransitionGroup = require(130),
+    CSSTransitionGroupChild = require(135);
 
 
 var CSSTransitionGroupPrototype;
@@ -6396,12 +6434,12 @@ function(require, exports, module, global) {
 var virt = require(8),
     extend = require(44),
     forEach = require(71),
-    propTypes = require(123),
-    emptyFunction = require(125),
-    createTransitionChild = require(129),
-    getChildMapping = require(130),
-    getMovePositions = require(131),
-    mergeChildMappings = require(132);
+    propTypes = require(125),
+    emptyFunction = require(127),
+    createTransitionChild = require(131),
+    getChildMapping = require(132),
+    getMovePositions = require(133),
+    mergeChildMappings = require(134);
 
 
 var TransitionGroupPrototype;
@@ -6802,8 +6840,8 @@ function(require, exports, module, global) {
 var virt = require(8),
     virtDOM = require(60),
     forEach = require(71),
-    transitionEvents = require(134),
-    domClass = require(136);
+    transitionEvents = require(136),
+    domClass = require(138);
 
 
 var CSSTransitionGroupChildPrototype,
@@ -6925,7 +6963,7 @@ CSSTransitionGroupChildPrototype.render = function() {
 function(require, exports, module, global) {
 
 var has = require(18),
-    supports = require(135);
+    supports = require(137);
 
 
 var transitionEvents = exports,
@@ -7029,10 +7067,10 @@ supports.touch = supports.dom && "ontouchstart" in environment.window;
 },
 function(require, exports, module, global) {
 
-var trim = require(137),
+var trim = require(139),
     isArray = require(12),
     isString = require(15),
-    isElement = require(113);
+    isElement = require(115);
 
 
 var domClass = exports,
@@ -7190,7 +7228,7 @@ trim.right = function trimRight(str) {
 },
 function(require, exports, module, global) {
 
-var EventEmitter = require(139);
+var EventEmitter = require(141);
 
 
 var dispatcher = module.exports = new EventEmitter(-1),
@@ -7590,9 +7628,9 @@ module.exports = EventEmitter;
 },
 function(require, exports, module, global) {
 
-var EventEmitter = require(139),
-    values = require(141),
-    dispatcher = require(138);
+var EventEmitter = require(141),
+    values = require(143),
+    dispatcher = require(140);
 
 
 var TodoStore = module.exports = new EventEmitter(-1),
@@ -7718,7 +7756,7 @@ module.exports = values;
 function(require, exports, module, global) {
 
 var virt = require(8),
-    propTypes = require(123);
+    propTypes = require(125);
 
 
 var TodoItemPrototype;
@@ -7769,8 +7807,8 @@ function(require, exports, module, global) {
 var virt = require(8),
     virtDOM = require(60),
     eventListener = require(2),
-    dispatcher = require(138),
-    TodoStore = require(140);
+    dispatcher = require(140),
+    TodoStore = require(142);
 
 
 var TodoFormPrototype;
