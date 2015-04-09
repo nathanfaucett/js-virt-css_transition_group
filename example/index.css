@@ -1,10 +1,10 @@
-.todo-list .todo-item p{
-  display: inline-block;
-  padding: 4px;
+.todo-list .todo-item{
+  padding: 8px 0;
 }
-.todo-list .todo-item a{
-  display: inline-block;
-  padding: 4px;
+.todo-list .todo-item p{
+  margin: 0;
+}
+a{
   cursor: pointer;
 }
 
@@ -29,7 +29,7 @@
   transition: transform 250ms ease-in-out;
 }
 .transition-move-up.transition-move-up-active {
-  transform: translate3d(0, 58px, 0);
+  transform: translate3d(0, 34px, 0);
 }
 
 .transition-move-down {
@@ -37,5 +37,5 @@
   transition: transform 250ms ease-in-out;
 }
 .transition-move-down.transition-move-down-active {
-  transform: translate3d(0, -58px, 0);
+  transform: translate3d(0, -34px, 0);
 }
