@@ -7,6 +7,9 @@ var virt = require("virt"),
 var CSSTransitionGroupPrototype;
 
 
+require("./handlers");
+
+
 module.exports = CSSTransitionGroup;
 
 

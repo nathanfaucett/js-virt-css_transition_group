@@ -9,18 +9,10 @@ module.exports = CSSTransitionGroupChild;
 
 
 function CSSTransitionGroupChild(props, children, context) {
-
     virt.Component.call(this, props, children, context);
-
-    this.classNameQueue = [];
 }
 virt.Component.extend(CSSTransitionGroupChild, "virt.CSSTransitionGroupChild");
-
 CSSTransitionGroupChildPrototype = CSSTransitionGroupChild.prototype;
-
-CSSTransitionGroupChildPrototype.componentWillUnmount = function() {
-    // cancel any request ids
-};
 
 CSSTransitionGroupChildPrototype.componentWillEnter = function(done) {
     if (this.props.enter) {
@@ -59,22 +51,21 @@ CSSTransitionGroupChildPrototype.enqueueEndListener = function(messageId, callba
         messageName = "virt.CSSTransitionGroupChild.transition.endListener" + messageId;
 
     function onEndListener(error) {
+
+        _this.offMessage(messageName, onEndListener);
+
         if (error) {
             throw error;
         } else {
-            //console.log("called", messageId);
-            _this.offMessage(messageName, onEndListener);
             callback();
         }
     }
 
-    //console.log("queued", messageId);
     this.onMessage(messageName, onEndListener);
 };
 
 CSSTransitionGroupChildPrototype.transition = function(animationType, callback) {
-    var _this = this,
-        messageId = MESSAGE_ID++,
+    var messageId = MESSAGE_ID++,
         className = this.props.name + "-" + animationType,
         activeClassName = className + "-active";
 
@@ -85,32 +76,7 @@ CSSTransitionGroupChildPrototype.transition = function(animationType, callback) 
         messageId: messageId,
         className: className,
         activeClassName: activeClassName
-    }, function(error) {
-        if (error) {
-            throw error;
-        } else {
-            _this.queueClass(activeClassName);
-        }
     });
-};
-
-CSSTransitionGroupChildPrototype.queueClass = function(className) {
-    var classNameQueue = this.classNameQueue;
-    classNameQueue[classNameQueue.length] = className;
-    this.flushClassNameQueue();
-};
-
-CSSTransitionGroupChildPrototype.flushClassNameQueue = function() {
-    var classNameQueue = this.classNameQueue;
-
-    if (this.isMounted()) {
-        this.emitMessage("virt.CSSTransitionGroupChild.flushClassNameQueue", {
-            id: this.getInternalId(),
-            classNameQueue: classNameQueue.slice()
-        }, function onFlushClassNameQueue() {
-            classNameQueue.length = 0;
-        });
-    }
 };
 
 CSSTransitionGroupChildPrototype.render = function() {
