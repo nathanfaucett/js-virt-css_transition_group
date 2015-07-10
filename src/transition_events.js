@@ -1,6 +1,7 @@
 var has = require("has"),
     forEach = require("for_each"),
-    supports = require("supports");
+    supports = require("supports"),
+    requestAnimationFrame = require("request_animation_frame");
 
 
 var transitionEvents = exports,
@@ -64,7 +65,7 @@ function removeEventListener(node, eventName, eventListener) {
 
 transitionEvents.addEndEventListener = function(node, eventListener) {
     if (END_EVENTS.length === 0) {
-        window.setTimeout(eventListener, 0);
+        requestAnimationFrame(eventListener);
     } else {
         forEach(END_EVENTS, function(endEvent) {
             addEventListener(node, endEvent, eventListener);

@@ -16,12 +16,12 @@ function CSSTransitionGroup(props, children, context) {
     virt.Component.call(this, props, children, context);
 
     this.childWrap = {
-        childFactory: function(child) {
+        childFactory: function childFactory(child) {
             return _this.__wrapChild(child);
         }
     };
 }
-virt.Component.extend(CSSTransitionGroup, "CSSTransitionGroup");
+virt.Component.extend(CSSTransitionGroup, "virt.CSSTransitionGroup");
 
 CSSTransitionGroup.defaultProps = {
     transitionName: "transition",

@@ -12,10 +12,12 @@
     "virt-css_transition_group.js"
   ],
   "scripts": {
-    "example": "comn -f example/src/index.js -o example/index.js"
+    "examples": "npm run worker && npm run browser",
+    "worker": "comn -f examples/worker/src/index.js -o examples/worker/index.js && comn -f examples/worker/src/worker.js -o examples/worker/worker.js",
+    "browser": "comn -f examples/browser/src/index.js -o examples/browser/index.js"
   },
   "author": "Nathan Faucett",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
     "grunt": "^0.4.5",
@@ -27,6 +29,7 @@
     "extend": "git://github.com/nathanfaucett/extend",
     "for_each": "git://github.com/nathanfaucett/for_each",
     "has": "git://github.com/nathanfaucett/has",
+    "request_animation_frame": "git://github.com/nathanfaucett/request_animation_frame.git",
     "supports": "git://github.com/nathanfaucett/supports",
     "virt": "git://github.com/nathanfaucett/virt",
     "virt-dom": "git://github.com/nathanfaucett/virt-dom",

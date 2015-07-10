@@ -1,37 +1,25 @@
-var virt = require("virt"),
-    virtDOM = require("virt-dom"),
-    forEach = require("for_each"),
-    transitionEvents = require("./transition_events"),
-    domClass = require("dom_class");
+var virt = require("virt");
 
 
-var CSSTransitionGroupChildPrototype,
-    TICK = 1000 / 60;
+var MESSAGE_ID = 0,
+    CSSTransitionGroupChildPrototype;
 
 
 module.exports = CSSTransitionGroupChild;
 
 
 function CSSTransitionGroupChild(props, children, context) {
-    var _this = this;
 
     virt.Component.call(this, props, children, context);
 
-    this.timeout = null;
-
     this.classNameQueue = [];
-    this.flushClassNameQueue = function() {
-        return _this.__flushClassNameQueue();
-    };
 }
-virt.Component.extend(CSSTransitionGroupChild, "CSSTransitionGroupChild");
+virt.Component.extend(CSSTransitionGroupChild, "virt.CSSTransitionGroupChild");
 
 CSSTransitionGroupChildPrototype = CSSTransitionGroupChild.prototype;
 
 CSSTransitionGroupChildPrototype.componentWillUnmount = function() {
-    if (this.timeout !== null) {
-        clearTimeout(this.timeout);
-    }
+    // cancel any request ids
 };
 
 CSSTransitionGroupChildPrototype.componentWillEnter = function(done) {
@@ -66,53 +54,63 @@ CSSTransitionGroupChildPrototype.componentWillMoveDown = function(done) {
     }
 };
 
-CSSTransitionGroupChildPrototype.transition = function(animationType, callback) {
-    var node = virtDOM.findDOMNode(this),
-        className = this.props.name + "-" + animationType,
-        activeClassName = className + "-active";
+CSSTransitionGroupChildPrototype.enqueueEndListener = function(messageId, callback) {
+    var _this = this,
+        messageName = "virt.CSSTransitionGroupChild.transition.endListener" + messageId;
 
-    function endListener(e) {
-        if (e && e.target === node) {
-            domClass.remove(node, className);
-            domClass.remove(node, activeClassName);
-
-            transitionEvents.removeEndEventListener(node, endListener);
-
-            if (callback) {
-                callback();
-            }
+    function onEndListener(error) {
+        if (error) {
+            throw error;
+        } else {
+            //console.log("called", messageId);
+            _this.offMessage(messageName, onEndListener);
+            callback();
         }
     }
 
-    transitionEvents.addEndEventListener(node, endListener);
-    domClass.add(node, className);
+    //console.log("queued", messageId);
+    this.onMessage(messageName, onEndListener);
+};
 
-    this.queueClass(activeClassName);
+CSSTransitionGroupChildPrototype.transition = function(animationType, callback) {
+    var _this = this,
+        messageId = MESSAGE_ID++,
+        className = this.props.name + "-" + animationType,
+        activeClassName = className + "-active";
+
+    this.enqueueEndListener(messageId, callback);
+
+    this.emitMessage("virt.CSSTransitionGroupChild.transition", {
+        id: this.getInternalId(),
+        messageId: messageId,
+        className: className,
+        activeClassName: activeClassName
+    }, function(error) {
+        if (error) {
+            throw error;
+        } else {
+            _this.queueClass(activeClassName);
+        }
+    });
 };
 
 CSSTransitionGroupChildPrototype.queueClass = function(className) {
     var classNameQueue = this.classNameQueue;
-
     classNameQueue[classNameQueue.length] = className;
-
-    if (this.timeout === null) {
-        this.timeout = setTimeout(this.flushClassNameQueue, TICK);
-    }
+    this.flushClassNameQueue();
 };
 
-CSSTransitionGroupChildPrototype.__flushClassNameQueue = function() {
-    var node;
+CSSTransitionGroupChildPrototype.flushClassNameQueue = function() {
+    var classNameQueue = this.classNameQueue;
 
     if (this.isMounted()) {
-        node = virtDOM.findDOMNode(this);
-
-        forEach(this.classNameQueue, function(className) {
-            domClass.add(node, className);
+        this.emitMessage("virt.CSSTransitionGroupChild.flushClassNameQueue", {
+            id: this.getInternalId(),
+            classNameQueue: classNameQueue.slice()
+        }, function onFlushClassNameQueue() {
+            classNameQueue.length = 0;
         });
     }
-
-    this.classNameQueue.length = 0;
-    this.timeout = null;
 };
 
 CSSTransitionGroupChildPrototype.render = function() {

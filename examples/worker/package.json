@@ -1,0 +1,14 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Nathan Faucett",
+  "dependencies": {
+    "environment": "nathanfaucett/environment",
+    "event_emitter": "nathanfaucett/event_emitter",
+    "event_listener": "nathanfaucett/event_listener",
+    "map": "nathanfaucett/map",
+    "prop_types": "git://github.com/nathanfaucett/prop_types",
+    "values": "nathanfaucett/values"
+  }
+}

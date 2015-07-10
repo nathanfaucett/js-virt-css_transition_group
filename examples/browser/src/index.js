@@ -5,6 +5,11 @@ var environment = require("environment"),
     App = require("./app");
 
 
+require("../../../src/handlers");
+
+
 eventListener.on(environment.window, "load", function() {
     virtDOM.render(virt.createView(App), document.getElementById("app"));
 });
+
+

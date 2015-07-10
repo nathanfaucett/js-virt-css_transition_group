@@ -35,7 +35,7 @@ TodoItemPrototype.render = function() {
                     dangerouslySetInnerHTML: true
                 },
                 "<span>" + this.props.text + "</span>",
-                virt.createView("a", {
+                virt.createView("span", {
                     onClick: this.props.onDestroy
                 }, " x ")
             )

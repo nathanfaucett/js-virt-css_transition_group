@@ -1,7 +1,6 @@
 var virt = require("virt"),
-    virtDOM = require("virt-dom"),
-    CSSTransitionGroup = require("../../src/index"),
     map = require("map"),
+    CSSTransitionGroup = require("../../.."),
     dispatcher = require("./dispatcher"),
     TodoStore = require("./todo_store"),
     TodoItem = require("./todo_item");
