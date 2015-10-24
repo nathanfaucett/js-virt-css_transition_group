@@ -4907,7 +4907,7 @@ function Adapter(root, containerDOMNode) {
     var socket = createMessengerAdapter(),
         messengerClient = new Messenger(socket.client),
         messengerServer = new Messenger(socket.server),
-        
+
         document = containerDOMNode.ownerDocument,
         window = getWindow(document),
         eventManager = root.eventManager,
@@ -4926,7 +4926,7 @@ function Adapter(root, containerDOMNode) {
     this.eventHandler = eventHandler;
 
     eventManager.propNameToTopLevel = consts.propNameToTopLevel;
-    
+
     eventHandler.handleDispatch = function handleDispatch(topLevelType, nativeEvent, targetId) {
         messengerServer.emit("virt.dom.Adapter.handleEventDispatch", {
             topLevelType: topLevelType,
@@ -4934,14 +4934,14 @@ function Adapter(root, containerDOMNode) {
             targetId: targetId
         });
     };
-    
+
     messengerClient.on("virt.dom.Adapter.handleEventDispatch", function onHandleDispatch(data, callback) {
         var topLevelType = data.topLevelType,
             nativeEvent = data.nativeEvent,
             targetId = data.targetId,
             eventType = events[topLevelType],
             event;
-        
+
         traverseAncestors(targetId, function traverseAncestor(currentTargetId) {
             if (eventType[currentTargetId]) {
                 event = event || eventClassMap[topLevelType].getPooled(nativeEvent, eventHandler);
@@ -4956,19 +4956,21 @@ function Adapter(root, containerDOMNode) {
         if (event && event.isPersistent !== true) {
             event.destroy();
         }
+
+        callback();
     });
-    
+
     this.handle = function(transaction, callback) {
         messengerServer.emit("virt.dom.Adapter.handleTransaction", transaction, callback);
     };
-    
+
     messengerClient.on("virt.dom.Adapter.handleTransaction", function onHandleTransaction__(transaction, callback) {
         applyPatches(transaction.patches, containerDOMNode, document);
         applyEvents(transaction.events, eventHandler);
         applyPatches(transaction.removes, containerDOMNode, document);
         callback();
     });
-    
+
     registerNativeComponents(root, nativeDOM.components);
     registerNativeComponentHandlers(messengerClient, nativeDOM.handlers);
 }
@@ -7325,7 +7327,7 @@ function createWorkerRender(url, containerDOMNode) {
         viewport = eventHandler.viewport,
 
         messenger = new Messenger(new MessengerWorkerAdapter(url));
-    
+
     messenger.on("virt.dom.WorkerAdapter.handleTransaction", function handleTransaction(transaction, callback) {
 
         applyPatches(transaction.patches, containerDOMNode, document);
