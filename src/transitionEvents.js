@@ -1,5 +1,5 @@
 var has = require("has"),
-    forEach = require("for_each"),
+    arrayForEach = require("array-for_each"),
     supports = require("supports"),
     requestAnimationFrame = require("request_animation_frame");
 
@@ -29,7 +29,8 @@ var transitionEvents = exports,
 
 if (supports.dom) {
     (function detectEvents() {
-        var testNode = document.createElement("div"),
+        var localHas = has,
+            testNode = document.createElement("div"),
             style = testNode.style,
             baseEventName, baseEvents, styleName;
 
@@ -42,7 +43,7 @@ if (supports.dom) {
         }
 
         for (baseEventName in EVENT_NAME_MAP) {
-            if (has(EVENT_NAME_MAP, baseEventName)) {
+            if (localHas(EVENT_NAME_MAP, baseEventName)) {
                 baseEvents = EVENT_NAME_MAP[baseEventName];
                 for (styleName in baseEvents) {
                     if (styleName in style) {
@@ -67,7 +68,7 @@ transitionEvents.addEndEventListener = function(node, eventListener) {
     if (END_EVENTS.length === 0) {
         requestAnimationFrame(eventListener);
     } else {
-        forEach(END_EVENTS, function(endEvent) {
+        arrayForEach(END_EVENTS, function(endEvent) {
             addEventListener(node, endEvent, eventListener);
         });
     }
@@ -75,7 +76,7 @@ transitionEvents.addEndEventListener = function(node, eventListener) {
 
 transitionEvents.removeEndEventListener = function(node, eventListener) {
     if (END_EVENTS.length !== 0) {
-        forEach(END_EVENTS, function(endEvent) {
+        arrayForEach(END_EVENTS, function(endEvent) {
             removeEventListener(node, endEvent, eventListener);
         });
     }

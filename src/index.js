@@ -1,7 +1,7 @@
 var virt = require("virt"),
     extend = require("extend"),
     TransitionGroup = require("virt-transition_group"),
-    CSSTransitionGroupChild = require("./css_transition_group_child");
+    CSSTransitionGroupChild = require("./CSSTransitionGroupChild");
 
 
 var CSSTransitionGroupPrototype;

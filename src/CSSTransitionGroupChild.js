@@ -31,7 +31,7 @@ CSSTransitionGroupChildPrototype.componentWillLeave = function(done) {
 };
 
 CSSTransitionGroupChildPrototype.componentWillMoveUp = function(done) {
-    if (this.props.leave) {
+    if (this.props.move) {
         this.transition("move-up", done);
     } else {
         done();
@@ -39,7 +39,7 @@ CSSTransitionGroupChildPrototype.componentWillMoveUp = function(done) {
 };
 
 CSSTransitionGroupChildPrototype.componentWillMoveDown = function(done) {
-    if (this.props.leave) {
+    if (this.props.move) {
         this.transition("move-down", done);
     } else {
         done();
@@ -48,7 +48,7 @@ CSSTransitionGroupChildPrototype.componentWillMoveDown = function(done) {
 
 CSSTransitionGroupChildPrototype.enqueueEndListener = function(messageId, callback) {
     var _this = this,
-        messageName = "virt.CSSTransitionGroupChild.transition.endListener" + messageId;
+        messageName = "virt.CSSTransitionGroupChild.transition.endListener-" + messageId;
 
     function onEndListener(error) {
 

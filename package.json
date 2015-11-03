@@ -13,26 +13,27 @@
   ],
   "scripts": {
     "examples": "npm run worker && npm run browser",
-    "worker": "comn -f examples/worker/src/index.js -o examples/worker/index.js && comn -f examples/worker/src/worker.js -o examples/worker/worker.js",
-    "browser": "comn -f examples/browser/src/index.js -o examples/browser/index.js"
+    "worker": "comn -f ./examples/worker/src/index.js -o ./examples/worker/index.js && comn -f ./examples/worker/src/worker.js -o ./examples/worker/worker.js",
+    "browser": "comn -f ./examples/browser/src/index.js -o ./examples/browser/index.js"
   },
   "author": "Nathan Faucett",
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
+    "comn": "git://github.com/nathanfaucett/comn.git",
     "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-jsbeautifier": "^0.2.7"
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-jsbeautifier": "^0.2.10"
   },
   "dependencies": {
-    "dom_class": "git://github.com/nathanfaucett/dom_class",
-    "extend": "git://github.com/nathanfaucett/extend",
-    "for_each": "git://github.com/nathanfaucett/for_each",
-    "has": "git://github.com/nathanfaucett/has",
+    "dom_class": "git://github.com/nathanfaucett/dom_class.git",
+    "extend": "git://github.com/nathanfaucett/extend.git",
+    "array-for_each": "git://github.com/nathanfaucett/array-for_each.git",
+    "has": "git://github.com/nathanfaucett/has.git",
     "request_animation_frame": "git://github.com/nathanfaucett/request_animation_frame.git",
-    "supports": "git://github.com/nathanfaucett/supports",
-    "virt": "git://github.com/nathanfaucett/virt",
-    "virt-dom": "git://github.com/nathanfaucett/virt-dom",
-    "virt-transition_group": "git://github.com/nathanfaucett/virt-transition_group"
+    "supports": "git://github.com/nathanfaucett/supports.git",
+    "virt": "git://github.com/nathanfaucett/virt.git",
+    "virt-dom": "git://github.com/nathanfaucett/virt-dom.git",
+    "virt-transition_group": "git://github.com/nathanfaucett/virt-transition_group.git"
   }
 }
