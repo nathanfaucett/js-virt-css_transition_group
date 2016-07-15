@@ -1,4 +1,4 @@
-var EventEmitter = require("event_emitter");
+var EventEmitter = require("@nathanfaucett/event_emitter");
 
 
 var dispatcher = module.exports = new EventEmitter(-1),

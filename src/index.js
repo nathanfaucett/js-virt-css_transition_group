@@ -1,10 +1,11 @@
-var virt = require("virt"),
-    extend = require("extend"),
-    TransitionGroup = require("virt-transition_group"),
+var virt = require("@nathanfaucett/virt"),
+    extend = require("@nathanfaucett/extend"),
+    TransitionGroup = require("@nathanfaucett/virt-transition_group"),
     CSSTransitionGroupChild = require("./CSSTransitionGroupChild");
 
 
-var CSSTransitionGroupPrototype;
+var Component = virt.Component,
+    CSSTransitionGroupPrototype;
 
 
 require("./handlers");
@@ -16,7 +17,7 @@ module.exports = CSSTransitionGroup;
 function CSSTransitionGroup(props, children, context) {
     var _this = this;
 
-    virt.Component.call(this, props, children, context);
+    Component.call(this, props, children, context);
 
     this.childWrap = {
         childFactory: function childFactory(child) {
@@ -24,7 +25,7 @@ function CSSTransitionGroup(props, children, context) {
         }
     };
 }
-virt.Component.extend(CSSTransitionGroup, "virt.CSSTransitionGroup");
+Component.extend(CSSTransitionGroup, "virt.CSSTransitionGroup");
 
 CSSTransitionGroup.defaultProps = {
     transitionName: "transition",

@@ -5,7 +5,7 @@ Virt CSSTransitionGroup for the browser and node.js
 
 
 ```javascript
-var CSSTransitionGroup = require("virt-css_transition_group");
+var CSSTransitionGroup = require("@nathanfaucett/virt-css_transition_group");;
 
 
 // require this in DOM thread

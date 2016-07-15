@@ -1,7 +1,7 @@
-var has = require("has"),
-    arrayForEach = require("array-for_each"),
-    supports = require("supports"),
-    requestAnimationFrame = require("request_animation_frame");
+var has = require("@nathanfaucett/has"),
+    arrayForEach = require("@nathanfaucett/array-for_each"),
+    supports = require("@nathanfaucett/supports"),
+    requestAnimationFrame = require("@nathanfaucett/request_animation_frame");
 
 
 var transitionEvents = exports,

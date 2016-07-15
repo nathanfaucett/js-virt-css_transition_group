@@ -1,6 +1,6 @@
-var environment = require("environment"),
-    eventListener = require("event_listener"),
-    virtDOM = require("virt-dom");
+var environment = require("@nathanfaucett/environment"),
+    eventListener = require("@nathanfaucett/event_listener"),
+    virtDOM = require("@nathanfaucett/virt-dom");;
 
 
 require("../../../src/handlers");

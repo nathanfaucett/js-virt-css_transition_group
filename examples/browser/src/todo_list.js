@@ -1,5 +1,5 @@
-var virt = require("virt"),
-    map = require("map"),
+var virt = require("@nathanfaucett/virt"),
+    arrayMap = require("@nathanfaucett/array-map"),
     CSSTransitionGroup = require("../../.."),
     dispatcher = require("./dispatcher"),
     TodoStore = require("./todo_store"),
@@ -63,7 +63,7 @@ TodoListPrototype.render = function() {
                 className: "todo-list",
                 component: "ul"
             },
-            map(this.state.list, function(item) {
+            arrayMap(this.state.list, function(item) {
                 return virt.createView(TodoItem, {
                     key: item.id,
                     id: item.id,

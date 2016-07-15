@@ -1,5 +1,5 @@
-var EventEmitter = require("event_emitter"),
-    values = require("values"),
+var EventEmitter = require("@nathanfaucett/event_emitter"),
+    values = require("@nathanfaucett/values"),
     dispatcher = require("./dispatcher");
 
 

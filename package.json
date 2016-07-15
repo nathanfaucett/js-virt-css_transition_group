@@ -1,5 +1,5 @@
 {
-  "name": "virt-css_transition_group",
+  "name": "@nathanfaucett/virt-css_transition_group",
   "version": "0.0.1",
   "description": "Virt CSSTransitionGroup for the browser and node.js",
   "repository": {
@@ -20,20 +20,23 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "comn": "git://github.com/nathanfaucett/comn.git",
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-jsbeautifier": "^0.2.10"
+    "@nathanfaucett/array-map": "0.0.1",
+    "@nathanfaucett/comn": "^0.0.1",
+    "@nathanfaucett/event_emitter": "0.0.1",
+    "@nathanfaucett/values": "0.0.1",
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-jsbeautifier": "^0.2.13"
   },
   "dependencies": {
-    "dom_class": "git://github.com/nathanfaucett/dom_class.git",
-    "extend": "git://github.com/nathanfaucett/extend.git",
-    "array-for_each": "git://github.com/nathanfaucett/array-for_each.git",
-    "has": "git://github.com/nathanfaucett/has.git",
-    "request_animation_frame": "git://github.com/nathanfaucett/request_animation_frame.git",
-    "supports": "git://github.com/nathanfaucett/supports.git",
-    "virt": "git://github.com/nathanfaucett/virt.git",
-    "virt-dom": "git://github.com/nathanfaucett/virt-dom.git",
-    "virt-transition_group": "git://github.com/nathanfaucett/virt-transition_group.git"
+    "@nathanfaucett/dom_class": "^0.0.1",
+    "@nathanfaucett/extend": "^0.0.1",
+    "@nathanfaucett/array-for_each": "^0.0.1",
+    "@nathanfaucett/has": "^0.0.1",
+    "@nathanfaucett/request_animation_frame": "^0.0.1",
+    "@nathanfaucett/supports": "^0.0.1",
+    "@nathanfaucett/virt": "^0.0.1",
+    "@nathanfaucett/virt-dom": "^0.0.1",
+    "@nathanfaucett/virt-transition_group": "^0.0.1"
   }
 }

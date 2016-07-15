@@ -1,5 +1,5 @@
-var virt = require("virt"),
-    eventListener = require("event_listener"),
+var virt = require("@nathanfaucett/virt"),
+    eventListener = require("@nathanfaucett/event_listener"),
     dispatcher = require("./dispatcher"),
     TodoStore = require("./todo_store");
 

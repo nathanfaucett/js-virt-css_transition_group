@@ -1,5 +1,5 @@
-var virt = require("virt"),
-    propTypes = require("prop_types"),
+var virt = require("@nathanfaucett/virt"),
+    propTypes = require("@nathanfaucett/prop_types"),
     TodoList = require("./todo_list"),
     TodoForm = require("./todo_form");
 

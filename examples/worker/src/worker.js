@@ -1,5 +1,5 @@
-var virt = require("virt"),
-    virtDOM = require("virt-dom"),
+var virt = require("@nathanfaucett/virt"),
+    virtDOM = require("@nathanfaucett/virt-dom"),
     App = require("./app");
 
 
